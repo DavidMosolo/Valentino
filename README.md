@@ -1,4 +1,3 @@
-# Valentino
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,178 +6,136 @@
     <title>Be My Valentine?</title>
     <style>
         body {
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffccd5;
             font-family: Arial, sans-serif;
-            background-color: #ffe6e6;
+            text-align: center;
             overflow: hidden;
-            margin: 0;
-            transition: background-color 2s, color 2s;
+            transition: background 3s ease-in-out, color 3s ease-in-out;
         }
-        #container {
-            margin-top: 50px;
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        #bear {
-            width: 200px;
+        h1 {
+            color: #e63946;
         }
         .buttons {
             margin-top: 20px;
         }
         button {
-            font-size: 20px;
             padding: 10px 20px;
-            margin: 10px;
-            cursor: pointer;
+            font-size: 18px;
             border: none;
             border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
         }
-        #yes_my_love {
-            background-color: #4CAF50;
+        .yes {
+            background-color: #ff4d6d;
             color: white;
         }
-        #im_sorry_babe {
-            background-color: #ff4d4d;
+        .no {
+            background-color: #6c757d;
             color: white;
         }
-        #back_button {
-            background-color: #808080;
+        .back {
+            display: none;
+            background-color: #007bff;
             color: white;
         }
-        #confettiCanvas {
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            opacity: 0.7;
+            animation: fall 3s linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-100vh) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+        .message {
+            display: none;
+            text-align: center;
+            font-size: 2rem;
+            color: red;
             position: absolute;
-            top: 0;
-            left: 0;
-            pointer-events: none;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+        }
+        .scary-image {
+            width: 150px; /* Reduced size */
+            height: auto;
+        }
+        .teddy-image {
+            width: 200px; /* Teddy bear image size */
+            height: auto;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <canvas id="confettiCanvas"></canvas>
-    <div id="container">
+    <div class="container" id="mainContainer">
         <h1>Will you be my Valentine? ❤️</h1>
-        <img id="bear" src="https://pngimg.com/uploads/teddy_bear/teddy_bear_PNG77.png" alt="Cute Teddy Bear">
         <div class="buttons">
-            <button id="yes_my_love">Yes my love</button>
-            <button id="im_sorry_babe">I'm sorry babe</button>
+            <button class="yes" onclick="showLove()">Yes</button>
+            <button class="no" onclick="showRejection()">No</button>
         </div>
     </div>
+    <div class="message" id="loveMessage">
+        <p>You made my heart happy! ❤️🥰</p>
+        <img class="teddy-image" src="https://th.bing.com/th/id/OIP.hLfdQpjb4VqpWozzbiXe7gHaEK?w=1920&h=1080&rs=1&pid=ImgDetMain" alt="Teddy Bear">
+        <button class="back" onclick="goBack()">Back</button>
+    </div>
+    <div class="message" id="rejection">
+        <p>wa nyela nfana, u rata or u sa rate you are my valentine</p>
+        <p>tla u tseye</p>
+        <img class="scary-image" src="https://static.vecteezy.com/system/resources/previews/003/734/971/original/evil-teddy-bear-vector.jpg" alt="Scary Valentine Image">
+        <button class="back" onclick="goBack()">Back</button>
+    </div>
     <script>
-        const canvas = document.getElementById('confettiCanvas');
-        const ctx = canvas.getContext('2d');
-        let confettiArray = [];
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        function Confetti() {
-            this.x = Math.random() * canvas.width;
-            this.y = -10;
-            this.size = Math.random() * 5 + 5;
-            this.speedY = Math.random() * 3 + 2;
-            this.speedX = Math.random() * 2 - 1;
-            this.color = ['#ff0', '#f00', '#0f0', '#00f', '#f0f'][Math.floor(Math.random() * 5)];
+        function showLove() {
+            createConfetti();
+            document.querySelector(".container").style.display = "none";
+            document.getElementById("loveMessage").style.display = "block";
+            document.querySelector(".back").style.display = "block";
         }
-
-        Confetti.prototype.update = function() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-
-            if (this.y > canvas.height) {
-                this.y = -10;
-                this.x = Math.random() * canvas.width;
-            }
-
-            if (this.x > canvas.width || this.x < 0) {
-                this.speedX = -this.speedX;
-            }
-
-            this.draw();
-        };
-
-        Confetti.prototype.draw = function() {
-            ctx.fillStyle = this.color;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-        };
-
         function createConfetti() {
             for (let i = 0; i < 100; i++) {
-                confettiArray.push(new Confetti());
+                let confetti = document.createElement("div");
+                confetti.classList.add("confetti");
+                confetti.style.left = Math.random() * window.innerWidth + "px";
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                confetti.style.animationDuration = (Math.random() * 2 + 1) + "s";
+                document.body.appendChild(confetti);
             }
         }
-
-        function animateConfetti() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            confettiArray.forEach(confetti => confetti.update());
-            requestAnimationFrame(animateConfetti);
-        }
-
-        function stopConfetti() {
-            confettiArray = [];
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        document.getElementById('yes_my_love').addEventListener('click', function() {
-            document.getElementById('container').innerHTML = '<h1>Yay! 🎉</h1><img src="https://th.bing.com/th/id/OIP.hRZXJfQJ9kvkHZw1nD96_gHaJZ?w=156&h=180&c=7&r=0&o=5&pid=1.7" style="width:200px;"><p>You made me the happiest person!</p><button id="back_button">Back</button>';
-            createConfetti();
-            animateConfetti();
-
-            document.getElementById('back_button').addEventListener('click', function() {
-                stopConfetti();
-                document.getElementById('container').innerHTML = `<h1>Will you be my Valentine? ❤️</h1><img id="bear" src="https://pngimg.com/uploads/teddy_bear/teddy_bear_PNG77.png" alt="Cute Teddy Bear"><div class="buttons"><button id="yes_my_love">Yes my love</button><button id="im_sorry_babe">I'm sorry babe</button></div>`;
-                addEventListeners();
-            });
-        });
-
-        document.getElementById('im_sorry_babe').addEventListener('click', function() {
-            document.body.style.transition = "background-color 2s, color 2s";
+        function showRejection() {
             document.body.style.backgroundColor = "black";
-            document.body.style.color = "white";
-            document.getElementById('container').style.transition = "color 2s";
-            document.getElementById('container').style.color = "red";
-            document.getElementById('container').innerHTML = '<h1>Wa nyela nfana! 🤨</h1><p>U rata kapa u sa nyake, you\'re my Valentine!</p><img src="https://th.bing.com/th/id/OIP.NrOtUbx1qq7qyTDxsU9bVgHaHD?w=206&h=196&c=7&r=0&o=5&pid=1.7" style="width:200px;"><p>There\'s no escape 😈</p><p>tlao tseye</p><button id="back_button">Back</button>';
-
-            document.getElementById('back_button').addEventListener('click', function() {
-                stopConfetti();
-                document.body.style.backgroundColor = "#ffe6e6";
-                document.body.style.color = "black";
-                document.getElementById('container').style.color = "black";
-                document.getElementById('container').innerHTML = `<h1>Will you be my Valentine? ❤️</h1><img id="bear" src="https://pngimg.com/uploads/teddy_bear/teddy_bear_PNG77.png" alt="Cute Teddy Bear"><div class="buttons"><button id="yes_my_love">Yes my love</button><button id="im_sorry_babe">I'm sorry babe</button></div>`;
-                addEventListeners();
-            });
-        });
-
-        function addEventListeners() {
-            document.getElementById('yes_my_love').addEventListener('click', function() {
-                document.getElementById('container').innerHTML = '<h1>Yay! 🎉</h1><img src="https://th.bing.com/th/id/OIP.hRZXJfQJ9kvkHZw1nD96_gHaJZ?w=156&h=180&c=7&r=0&o=5&pid=1.7" style="width:200px;"><p>You made me the happiest person!</p><button id="back_button">Back</button>';
-                createConfetti();
-                animateConfetti();
-                document.getElementById('back_button').addEventListener('click', function() {
-                    stopConfetti();
-                    document.getElementById('container').innerHTML = `<h1>Will you be my Valentine? ❤️</h1><img id="bear" src="https://pngimg.com/uploads/teddy_bear/teddy_bear_PNG77.png" alt="Cute Teddy Bear"><div class="buttons"><button id="yes_my_love">Yes my love</button><button id="im_sorry_babe">I'm sorry babe</button></div>`;
-                    addEventListeners();
-                });
-            });
-
-            document.getElementById('im_sorry_babe').addEventListener('click', function() {
-                document.body.style.transition = "background-color 2s, color 2s";
-                document.body.style.backgroundColor = "black";
-                document.body.style.color = "white";
-                document.getElementById('container').style.transition = "color 2s";
-                document.getElementById('container').style.color = "red";
-                document.getElementById('container').innerHTML = '<h1>Wa nyela nfana! 🤨</h1><p>U rata kapa u sa nyake, you\'re my Valentine!</p><img src="https://th.bing.com/th/id/OIP.NrOtUbx1qq7qyTDxsU9bVgHaHD?w=206&h=196&c=7&r=0&o=5&pid=1.7" style="width:200px;"><p>There\'s no escape 😈</p><p>tlao tseye</p><button id="back_button">Back</button>';
-
-                document.getElementById('back_button').addEventListener('click', function() {
-                    stopConfetti();
-                    document.body.style.backgroundColor = "#ffe6e6";
-                    document.body.style.color = "black";
-                    document.getElementById('container').style.color = "black";
-                    document.getElementById('container').innerHTML = `<h1>Will you be my Valentine? ❤️</h1><img id="bear" src="https://pngimg.com/uploads/teddy_bear/teddy_bear_PNG77.png" alt="Cute Teddy Bear"><div class="buttons"><button id="yes_my_love">Yes my love</button><button id="im_sorry_babe">I'm sorry babe</button></div>`;
-                    addEventListeners();
-                });
-            });
+            document.body.style.color = "red";
+            document.querySelector(".container").style.display = "none";
+            document.getElementById("rejection").style.display = "block";
+            document.querySelector(".back").style.display = "block";
         }
-
-        addEventListeners();
+        function goBack() {
+            document.body.style.backgroundColor = "#ffccd5";
+            document.body.style.color = "black";
+            document.getElementById("loveMessage").style.display = "none";
+            document.getElementById("rejection").style.display = "none";
+            document.querySelector(".container").style.display = "block";
+            document.querySelector(".back").style.display = "none";
+            let confettiElements = document.querySelectorAll(".confetti");
+            confettiElements.forEach(element => element.remove());
+        }
     </script>
 </body>
 </html>
